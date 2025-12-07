@@ -551,7 +551,7 @@ if uploaded_file is not None:
                 if 'preview_b64' in st.session_state and 'get_scanner_html' in locals():
                      image_placeholder.markdown(get_scanner_html(st.session_state['preview_b64'], animate=True), unsafe_allow_html=True)
                 
-                with st.spinner("Analyzing document structure..."):
+                with st.spinner("Processing neural layers..."):
                     if lottie_scan:
                         st_lottie(lottie_scan, height=120, key="scanning")
                     
