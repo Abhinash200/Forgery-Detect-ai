@@ -490,13 +490,50 @@ if uploaded_file is not None:
         if st.button("✕", key="close_btn", help="Close and Scan New"):
             reset_uploader()
         st.markdown('</div>', unsafe_allow_html=True)
+    c1, c2 = st.columns([1, 1], gap="large")
+    
+    with c1:
+        st.markdown('<div style="font-family: Orbitron, sans-serif; font-weight: 700; margin-bottom: 0.5rem; color: #38bdf8;">Document Preview</div>', unsafe_allow_html=True)
+        
+        # CLOUD OPTIMIZATION: Resize image server-side before sending back to client for preview.
+        # Sending a raw 5MB+ phone image back to the browser causes massive lag on Streamlit Cloud.
+        try:
+            img_preview = Image.open(uploaded_file)
+            img_preview.thumbnail((400, 400))  # Max 400px is enough for preview
+            st.image(img_preview, use_container_width=True)
+        except:
+            st.image(uploaded_file, use_container_width=True) # Fallback
+            
+        uploaded_file.seek(0)
+        
+    with c2:
+        st.write("")
+        
+        if st.session_state.scan_result is None:
+            st.markdown('<h4 style="color: #38bdf8; font-family: Orbitron, sans-serif; text-align: center;">Ready for Analysis</h4>', unsafe_allow_html=True)
+            st.markdown('<div style="font-family: Orbitron, sans-serif; font-size: 0.9rem; color: #a855f7; text-align: center;">Model: <b>EfficientNet-B0</b> | Security: <b>Encrypted</b></div>', unsafe_allow_html=True)
+            
+            action_placeholder = st.empty()
+            run_clicked = action_placeholder.button("RUN FORGERY ANALYSIS", use_container_width=True)
+            
+            if run_clicked:
+                action_placeholder.empty()
+                
+                with st.spinner("Processing neural layers..."):
+                    if lottie_scan:
+                        st_lottie(lottie_scan, height=120, key="scanning")
+                    
+                    try:
+                        # 1. Load Model
+                        detector = get_model()
                         
+                        # 2. Prepare Image
                         image = Image.open(uploaded_file).convert('RGB')
                         
-                       
+                        # 3. Predict
                         result = detector.predict(image)
                         
-                       
+                        # 4. Update State
                         st.session_state.scan_result = result
                         st.rerun()
                             
