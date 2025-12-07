@@ -10,3 +10,4 @@ pillow
 timm
 grad-cam
 opencv-python
+streamlit-lottie
