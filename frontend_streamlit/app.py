@@ -495,14 +495,41 @@ if uploaded_file is not None:
     with c1:
         st.markdown('<div style="font-family: Orbitron, sans-serif; font-weight: 700; margin-bottom: 0.5rem; color: #38bdf8;">Document Preview</div>', unsafe_allow_html=True)
         
-        # CLOUD OPTIMIZATION: Resize image server-side before sending back to client for preview.
-        # Sending a raw 5MB+ phone image back to the browser causes massive lag on Streamlit Cloud.
+        image_placeholder = st.empty()
+        
+        # CLOUD OPTIMIZATION: Resize image server-side (400px) + Base64 for custom HTML
+        # This keeps the payload small (<50KB) so the UI is snappy, but allows us to use 
+        # custom CSS overlays (like the scanner beam) which st.image doesn't support.
         try:
             img_preview = Image.open(uploaded_file)
-            img_preview.thumbnail((400, 400))  # Max 400px is enough for preview
-            st.image(img_preview, use_container_width=True)
-        except:
-            st.image(uploaded_file, use_container_width=True) # Fallback
+            img_preview.thumbnail((400, 400))
+            
+            # Convert to Base64 for HTML embedding
+            buffered = io.BytesIO()
+            if img_preview.mode in ("RGBA", "P"):
+                img_preview = img_preview.convert("RGB")
+            img_preview.save(buffered, format="JPEG", quality=70)
+            b64_img = base64.b64encode(buffered.getvalue()).decode()
+            
+            def get_scanner_html(animate=False):
+                overlay = ""
+                if animate:
+                    overlay = """
+<div class="scanner-grid"></div>
+<div class="scanner-line"></div>"""
+                
+                return f"""
+<div class="scanner-box">
+{overlay}
+<img src="data:image/jpeg;base64,{b64_img}" />
+</div>"""
+
+            # Show static preview initially
+            image_placeholder.markdown(get_scanner_html(animate=False), unsafe_allow_html=True)
+            
+        except Exception:
+            # Fallback if anything fails
+            st.image(uploaded_file, use_container_width=True)
             
         uploaded_file.seek(0)
         
@@ -518,6 +545,10 @@ if uploaded_file is not None:
             
             if run_clicked:
                 action_placeholder.empty()
+                
+                # Trigger the scanner beam animation on the preview image
+                if 'get_scanner_html' in locals():
+                     image_placeholder.markdown(get_scanner_html(animate=True), unsafe_allow_html=True)
                 
                 with st.spinner("Processing neural layers..."):
                     if lottie_scan:
