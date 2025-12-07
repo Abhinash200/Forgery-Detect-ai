@@ -498,8 +498,6 @@ if uploaded_file is not None:
         image_placeholder = st.empty()
         
         # CLOUD OPTIMIZATION: Resize image server-side (400px) + Base64 for custom HTML
-        # This keeps the payload small (<50KB) so the UI is snappy, but allows us to use 
-        # custom CSS overlays (like the scanner beam) which st.image doesn't support.
         try:
             img_preview = Image.open(uploaded_file)
             img_preview.thumbnail((400, 400))
@@ -511,7 +509,10 @@ if uploaded_file is not None:
             img_preview.save(buffered, format="JPEG", quality=70)
             b64_img = base64.b64encode(buffered.getvalue()).decode()
             
-            def get_scanner_html(animate=False):
+            # Store in session state for access in other columns
+            st.session_state['preview_b64'] = b64_img
+            
+            def get_scanner_html(b64, animate=False):
                 overlay = ""
                 if animate:
                     overlay = """
@@ -521,11 +522,11 @@ if uploaded_file is not None:
                 return f"""
 <div class="scanner-box">
 {overlay}
-<img src="data:image/jpeg;base64,{b64_img}" />
+<img src="data:image/jpeg;base64,{b64}" />
 </div>"""
 
             # Show static preview initially
-            image_placeholder.markdown(get_scanner_html(animate=False), unsafe_allow_html=True)
+            image_placeholder.markdown(get_scanner_html(b64_img, animate=False), unsafe_allow_html=True)
             
         except Exception:
             # Fallback if anything fails
@@ -544,11 +545,12 @@ if uploaded_file is not None:
             run_clicked = action_placeholder.button("RUN FORGERY ANALYSIS", use_container_width=True)
             
             if run_clicked:
+                st.toast("Analysis Started...", icon="🚀") # Immediate feedback
                 action_placeholder.empty()
                 
-                # Trigger the scanner beam animation on the preview image
-                if 'get_scanner_html' in locals():
-                     image_placeholder.markdown(get_scanner_html(animate=True), unsafe_allow_html=True)
+                # Trigger the scanner beam animation using stored Base64
+                if 'preview_b64' in st.session_state and 'get_scanner_html' in locals():
+                     image_placeholder.markdown(get_scanner_html(st.session_state['preview_b64'], animate=True), unsafe_allow_html=True)
                 
                 with st.spinner("Processing neural layers..."):
                     if lottie_scan:
@@ -557,6 +559,7 @@ if uploaded_file is not None:
                     try:
                         # 1. Load Model
                         detector = get_model()
+                        st.toast("Model Loaded...", icon="🧠")
                         
                         # 2. Prepare Image
                         image = Image.open(uploaded_file).convert('RGB')
