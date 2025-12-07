@@ -7,7 +7,7 @@ import os
 import base64
 import io
 
-# st.set_page_config must be the first Streamlit command
+
 st.set_page_config(
     page_title="ForgeryDetect AI",
     page_icon="🛡️",
@@ -15,10 +15,10 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Initialize Model (Cached so it loads only once)
+
 @st.cache_resource
 def get_model():
-    # Import here to avoid blocking the UI load with heavy Torch imports
+    
     from model_loader import ForgeryDetectionModel
     return ForgeryDetectionModel()
 
@@ -564,10 +564,12 @@ if uploaded_file is not None:
 """
             st.markdown(breaking_html, unsafe_allow_html=True)
             
+            conf_str = f"{confidence:.2f}%"
+            
             st.markdown(f"""
             <div style="text-align: center; margin-top: 1rem; font-family: 'Orbitron'; color: {res_color};">
             <span style="opacity: 0.8; font-size: 0.9rem;">PREDICTION ACCURACY</span><br>
-            <span style="font-size: 1.5rem; font-weight: bold;">{confidence:.2f}%</span>
+            <span style="font-size: 1.5rem; font-weight: bold;">{conf_str}</span>
             </div>
             """, unsafe_allow_html=True)
     
