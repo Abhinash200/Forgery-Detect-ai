@@ -493,57 +493,6 @@ if uploaded_file is not None:
 
     c1, c2 = st.columns([1, 1], gap="large")
     
-    with c1:
-        st.markdown('<div style="font-family: Orbitron, sans-serif; font-weight: 700; margin-bottom: 0.5rem; color: #38bdf8;">Document Preview</div>', unsafe_allow_html=True)
-        
-        image_placeholder = st.empty()
-        
-        try:
-            # 1. Open image using PIL
-            disp_img = Image.open(uploaded_file)
-            
-            # 2. Resize if too large (Optimized for Speed)
-            # Switch to BILINEAR - it is 3x faster than LANCZOS and sufficient for UI previews
-            max_width = 550
-            if disp_img.width > max_width:
-                w_percent = (max_width / float(disp_img.size[0]))
-                h_size = int((float(disp_img.size[1]) * float(w_percent)))
-                disp_img = disp_img.resize((max_width, h_size), Image.Resampling.BILINEAR)
-            
-            # 3. Convert to Base64 (JPEG quality 75 for balance of speed/quality)
-            buffered = io.BytesIO()
-            if disp_img.mode in ("RGBA", "P"):
-                disp_img = disp_img.convert("RGB")
-            disp_img.save(buffered, format="JPEG", quality=75)
-            b64_img = base64.b64encode(buffered.getvalue()).decode()
-            
-            # Reset file pointer so the model can read the original file later
-            uploaded_file.seek(0)
-            
-            def get_scanner_html(animate=False):
-                overlay = ""
-                if animate:
-                    overlay = """
-<div class="scanner-grid"></div>
-<div class="scanner-line"></div>"""
-                
-                return f"""
-<div class="scanner-box">
-{overlay}
-<img src="data:image/png;base64,{b64_img}" />
-</div>"""
-            
-            image_placeholder.markdown(get_scanner_html(animate=False), unsafe_allow_html=True)
-            
-        except Exception as e:
-            # Fallback if sophisticated preview fails
-            image_placeholder.image(uploaded_file, use_container_width=True)
-        
-    with c2:
-        st.write("")
-        
-        if st.session_state.scan_result is None:
-            st.markdown('<h4 style="color: #38bdf8; font-family: Orbitron, sans-serif; text-align: center;">Ready for Analysis</h4>', unsafe_allow_html=True)
             st.markdown('<div style="font-family: Orbitron, sans-serif; font-size: 0.9rem; color: #a855f7; text-align: center;">Model: <b>EfficientNet-B0</b> | Security: <b>Encrypted</b></div>', unsafe_allow_html=True)
             
             action_placeholder = st.empty()
