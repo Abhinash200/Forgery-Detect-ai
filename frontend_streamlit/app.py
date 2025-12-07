@@ -91,6 +91,16 @@ page_bg_css = f"""
         animation: glitch 6s infinite;
     }}
 
+    @media (max-width: 640px) {{
+        .hero-title {{
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }}
+        .block-container {{
+            padding-top: 3rem;
+        }}
+    }}
+
     [data-testid="stFileUploader"] {{
         width: 100%;
         margin: 0 auto;
