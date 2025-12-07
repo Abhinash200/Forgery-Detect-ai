@@ -15,7 +15,7 @@
 Unlike black-box models, ForgeryDetect AI prioritizes **Explainability (XAI)**. It not only flags a document as "Forged" or "Authentic" but also provides a dynamic **Neural Activation Heatmap (Grad-CAM)**, pinpointing exactly *where* the manipulation occurred—empowering human reviewers with actionable intelligence.
 
 ## ✨ Key Features
-*   **🧠 Advanced Deep Learning Core**: Powered by a fine-tuned **EfficientNet-B0** architecture, optimized for pattern recognition in high-resolution document imagery.
+*   **🧠 Advanced Deep Learning Core**: Powered by a custom-trained **EfficientNet-B0 (CNN)**, a highly efficient Convolutional Neural Network architecture optimized for feature extraction in synthetic ID documents.
 *   **🔍 Explainable AI (XAI)**: Integrated **Grad-CAM (Gradient-weighted Class Activation Mapping)** technology brings transparency to AI decisions, visualizing the specific regions contributing to the forgery probability.
 *   **⚡ Real-Time Inference**: High-performance **FastAPI** backend ensures sub-second latency for critical verification workflows.
 *   **🎨 Immersive Cyberpunk UI**: A stunning, modern **Streamlit** frontend featuring glassmorphism, laser-scan animations, and responsive design for a premium user experience.
@@ -23,14 +23,14 @@ Unlike black-box models, ForgeryDetect AI prioritizes **Explainability (XAI)**. 
 *   **🔒 Privacy-First Design**: Local processing capabilities ensure sensitive document data never needs to leave the secure perimeter (when deployed on-prem).
 
 ## 🛠️ Technology Stack
-*   **Model**: PyTorch, EfficientNet, Timm
+*   **Model**: PyTorch, EfficientNet-B0 (CNN)
 *   **Forensics**: Grad-CAM, OpenCV, NumPy
 *   **Backend API**: FastAPI, Uvicorn
 *   **Frontend**: Streamlit, Python-Lottie (Animations)
 *   **Deployment**: Docker Containers
 
 ## 📊 Performance Metrics
-The system has been rigorously tested on the **SROIE** and custom **FantasyID** datasets, achieving enterprise-ready benchmarks:
+The system was trained and validated on the **FantasyID** dataset (a specialized synthetic dataset for ID forgery research):
 *   **Accuracy**: 91.1%
 *   **Precision**: 94.1%
 *   **Recall**: 94.9%
