@@ -545,21 +545,19 @@ if uploaded_file is not None:
             run_clicked = action_placeholder.button("RUN FORGERY ANALYSIS", use_container_width=True)
             
             if run_clicked:
-                st.toast("Analysis Started...", icon="🚀") # Immediate feedback
                 action_placeholder.empty()
                 
                 # Trigger the scanner beam animation using stored Base64
                 if 'preview_b64' in st.session_state and 'get_scanner_html' in locals():
                      image_placeholder.markdown(get_scanner_html(st.session_state['preview_b64'], animate=True), unsafe_allow_html=True)
                 
-                with st.spinner("Processing neural layers..."):
+                with st.spinner("Analyzing document structure..."):
                     if lottie_scan:
                         st_lottie(lottie_scan, height=120, key="scanning")
                     
                     try:
                         # 1. Load Model
                         detector = get_model()
-                        st.toast("Model Loaded...", icon="🧠")
                         
                         # 2. Prepare Image
                         image = Image.open(uploaded_file).convert('RGB')
