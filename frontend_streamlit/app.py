@@ -601,8 +601,7 @@ if uploaded_file is not None:
                     </div>
                     """, unsafe_allow_html=True)
 
-if uploaded_file is None:
-    st.markdown("<br><br>", unsafe_allow_html=True)
+
 if uploaded_file is None:
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown("""
