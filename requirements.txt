@@ -9,5 +9,5 @@ streamlit
 pillow
 timm
 grad-cam
-opencv-python
+opencv-python-headless
 streamlit-lottie
