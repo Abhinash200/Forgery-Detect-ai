@@ -7,9 +7,7 @@ import os
 import base64
 import io
 
-# Import the model loader for direct inference (Required for Streamlit Cloud)
-from model_loader import ForgeryDetectionModel
-
+# st.set_page_config must be the first Streamlit command
 st.set_page_config(
     page_title="ForgeryDetect AI",
     page_icon="🛡️",
@@ -20,6 +18,8 @@ st.set_page_config(
 # Initialize Model (Cached so it loads only once)
 @st.cache_resource
 def get_model():
+    # Import here to avoid blocking the UI load with heavy Torch imports
+    from model_loader import ForgeryDetectionModel
     return ForgeryDetectionModel()
 
 @st.cache_data
@@ -484,21 +484,6 @@ if uploaded_file is not None:
     c1, c2 = st.columns([1, 1], gap="large")
     
     with c1:
-        st.markdown('<div style="font-family: Orbitron, sans-serif; font-weight: 700; margin-bottom: 0.5rem; color: #38bdf8;">Document Preview</div>', unsafe_allow_html=True)
-        
-        image_placeholder = st.empty()
-        
-        image_placeholder = st.empty()
-        
-        try:
-            img_bytes = uploaded_file.getvalue()
-            b64_img = base64.b64encode(img_bytes).decode()
-            
-            def get_scanner_html(animate=False):
-                overlay = ""
-                if animate:
-                    overlay = """
-<div class="scanner-grid"></div>
 <div class="scanner-line"></div>"""
                 
                 return f"""
