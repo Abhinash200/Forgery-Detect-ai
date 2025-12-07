@@ -71,6 +71,7 @@ The system was trained and validated on the **FantasyID** dataset (a specialized
     Open your browser and navigate to `http://localhost:8501`.
 
 ## 📸 Screenshots
+![UI Screenshot](frontend_streamlit/assets/ui_screenshot.png)
 *(This project features a high-fidelity UI with real-time feedback loops and visual indicators for security status)*
 
 ## 🔮 Future Roadmap
