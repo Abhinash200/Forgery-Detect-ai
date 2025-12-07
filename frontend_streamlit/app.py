@@ -5,6 +5,10 @@ import time
 from PIL import Image
 import os
 import base64
+import io
+
+# Import the model loader for direct inference (Required for Streamlit Cloud)
+from model_loader import ForgeryDetectionModel
 
 st.set_page_config(
     page_title="ForgeryDetect AI",
@@ -12,6 +16,11 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+# Initialize Model (Cached so it loads only once)
+@st.cache_resource
+def get_model():
+    return ForgeryDetectionModel()
 
 @st.cache_data
 def get_base64_of_bin_file(bin_file):
@@ -527,18 +536,24 @@ if uploaded_file is not None:
                     time.sleep(1.5)
                     
                     try:
-                        files = {"file": uploaded_file.getvalue()}
-                        response = requests.post("http://127.0.0.1:8000/analyze", files=files)
+                        # STANDALONE MODE: Run inference directly within Streamlit
+                        # Streamlit Cloud cannot access localhost:8000, so we use the internal model.
                         
-                        if response.status_code == 200:
-                            st.session_state.scan_result = response.json()
-                            st.rerun()
-                        else:
-                            st.error("Analysis Failed. Server Error.")
-                            action_placeholder.button("RUN FORGERY ANALYSIS", use_container_width=True, key="retry_btn")
+                        # 1. Load Model
+                        detector = get_model()
+                        
+                        # 2. Prepare Image
+                        image = Image.open(uploaded_file).convert('RGB')
+                        
+                        # 3. Predict
+                        result = detector.predict(image)
+                        
+                        # 4. Update State
+                        st.session_state.scan_result = result
+                        st.rerun()
                             
                     except Exception as e:
-                         st.error(f"Connection Failed: {e}")
+                         st.error(f"Analysis Failed: {e}")
                          action_placeholder.button("RUN FORGERY ANALYSIS", use_container_width=True, key="retry_btn_2")
 
         else:
