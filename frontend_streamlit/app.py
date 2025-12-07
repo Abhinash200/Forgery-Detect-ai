@@ -484,6 +484,36 @@ if uploaded_file is not None:
     c1, c2 = st.columns([1, 1], gap="large")
     
     with c1:
+        st.markdown('<div style="font-family: Orbitron, sans-serif; font-weight: 700; margin-bottom: 0.5rem; color: #38bdf8;">Document Preview</div>', unsafe_allow_html=True)
+        
+        image_placeholder = st.empty()
+        
+        try:
+            # 1. Open image using PIL
+            disp_img = Image.open(uploaded_file)
+            
+            # 2. Resize if too large (e.g., max width 600px) to speed up UI rendering
+            max_width = 600
+            if disp_img.width > max_width:
+                w_percent = (max_width / float(disp_img.size[0]))
+                h_size = int((float(disp_img.size[1]) * float(w_percent)))
+                disp_img = disp_img.resize((max_width, h_size), Image.Resampling.LANCZOS)
+            
+            # 3. Convert to Base64 (JPEG is faster/smaller for preview)
+            buffered = io.BytesIO()
+            if disp_img.mode in ("RGBA", "P"):
+                disp_img = disp_img.convert("RGB")
+            disp_img.save(buffered, format="JPEG", quality=80)
+            b64_img = base64.b64encode(buffered.getvalue()).decode()
+            
+            # Reset file pointer so the model can read the original file later
+            uploaded_file.seek(0)
+            
+            def get_scanner_html(animate=False):
+                overlay = ""
+                if animate:
+                    overlay = """
+<div class="scanner-grid"></div>
 <div class="scanner-line"></div>"""
                 
                 return f"""
@@ -494,8 +524,9 @@ if uploaded_file is not None:
             
             image_placeholder.markdown(get_scanner_html(animate=False), unsafe_allow_html=True)
             
-        except:
-             image_placeholder.image(uploaded_file, use_container_width=True)
+        except Exception as e:
+            # Fallback if sophisticated preview fails
+            image_placeholder.image(uploaded_file, use_container_width=True)
         
     with c2:
         st.write("")
