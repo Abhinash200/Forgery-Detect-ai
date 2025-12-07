@@ -495,7 +495,7 @@ if uploaded_file is not None:
     
     with c1:
         st.markdown('<div style="font-family: Orbitron, sans-serif; font-weight: 700; margin-bottom: 0.5rem; color: #38bdf8;">Document Preview</div>', unsafe_allow_html=True)
-        # Simplified Preview with native component for instant loading
+       
         st.image(uploaded_file, use_container_width=True)
         uploaded_file.seek(0)
         
@@ -511,9 +511,6 @@ if uploaded_file is not None:
             
             if run_clicked:
                 action_placeholder.empty()
-                
-                if 'b64_img' in locals():
-                    image_placeholder.markdown(get_scanner_html(animate=True), unsafe_allow_html=True)
                 
                 with st.spinner("Processing neural layers..."):
                     if lottie_scan:
