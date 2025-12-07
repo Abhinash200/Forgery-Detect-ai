@@ -519,8 +519,6 @@ if uploaded_file is not None:
             st.markdown('<h4 style="color: #38bdf8; font-family: Orbitron, sans-serif; text-align: center;">Ready for Analysis</h4>', unsafe_allow_html=True)
             st.markdown('<div style="font-family: Orbitron, sans-serif; font-size: 0.9rem; color: #a855f7; text-align: center;">Model: <b>EfficientNet-B0</b> | Security: <b>Encrypted</b></div>', unsafe_allow_html=True)
             
-            st.markdown('<div style="font-family: Orbitron, sans-serif; font-size: 0.9rem; color: #a855f7; text-align: center;">Model: <b>EfficientNet-B0</b> | Security: <b>Encrypted</b></div>', unsafe_allow_html=True)
-            
             action_placeholder = st.empty()
             run_clicked = action_placeholder.button("RUN FORGERY ANALYSIS", use_container_width=True)
             
