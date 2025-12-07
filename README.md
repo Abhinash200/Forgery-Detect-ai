@@ -71,7 +71,8 @@ The system was trained and validated on the **FantasyID** dataset (a specialized
     Open your browser and navigate to `http://localhost:8501`.
 
 ## 📸 Screenshots
-*(This project features a high-fidelity UI with real-time feedback loops and visual indicators for security status)*
+![Uploading image.png…]()
+
 
 ## 🔮 Future Roadmap
 *   **Multimodal Analysis**: Integrating OCR (Optical Character Recognition) to cross-verify text data against visual consistency.
