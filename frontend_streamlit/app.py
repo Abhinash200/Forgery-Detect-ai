@@ -494,37 +494,6 @@ if uploaded_file is not None:
     c1, c2 = st.columns([1, 1], gap="large")
     
     with c1:
-        st.markdown('<div style="font-family: Orbitron, sans-serif; font-weight: 700; margin-bottom: 0.5rem; color: #38bdf8;">Document Preview</div>', unsafe_allow_html=True)
-        
-        image_placeholder = st.empty()
-        
-        try:
-            # 1. Open image using PIL
-            disp_img = Image.open(uploaded_file)
-            
-            # Mobile Optimization: Convert to RGB first to handle complex formats (e.g. RGBA/P) faster
-            if disp_img.mode != "RGB":
-                disp_img = disp_img.convert("RGB")
-            
-            # 2. Resize if too large (e.g., max width 500px for phone screens)
-            # Use BILINEAR instead of LANCZOS for much faster resizing on CPU-limited cloud servers
-            max_width = 500
-            if disp_img.width > max_width:
-                w_percent = (max_width / float(disp_img.size[0]))
-                h_size = int((float(disp_img.size[1]) * float(w_percent)))
-                disp_img = disp_img.resize((max_width, h_size), Image.Resampling.BILINEAR)
-            
-            # 3. Convert to Base64 (JPEG quality 70 for speed)
-            buffered = io.BytesIO()
-            disp_img.save(buffered, format="JPEG", quality=70)
-            b64_img = base64.b64encode(buffered.getvalue()).decode()
-            
-            # Reset file pointer so the model can read the original file later
-            uploaded_file.seek(0)
-            
-            def get_scanner_html(animate=False):
-                overlay = ""
-                if animate:
                     overlay = """
 <div class="scanner-grid"></div>
 <div class="scanner-line"></div>"""
@@ -563,19 +532,17 @@ if uploaded_file is not None:
                     time.sleep(1.5)
                     
                     try:
-                        # STANDALONE MODE: Run inference directly within Streamlit
-                        # Streamlit Cloud cannot access localhost:8000, so we use the internal model.
+                       
                         
-                        # 1. Load Model
                         detector = get_model()
                         
-                        # 2. Prepare Image
+                        
                         image = Image.open(uploaded_file).convert('RGB')
                         
-                        # 3. Predict
+                       
                         result = detector.predict(image)
                         
-                        # 4. Update State
+                       
                         st.session_state.scan_result = result
                         st.rerun()
                             
